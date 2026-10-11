@@ -101,6 +101,19 @@ POS_MAP = {
     "transcription": "转写", "protologism": "专名", "determiner": "限定",
 }
 LEGACY_UNMAPPED = {"interj": "intj", "character": "character", "symbol": "symbol"}
+# 实测重建时仍会以英文残留的 pos，补进映射表（否则界面上会冒出 contraction 这类词性）
+POS_MAP.update({
+    "contraction": "缩", "name": "专名", "particle": "助", "proverb": "短语",
+    "adverb": "副", "adposition": "介", "interjection": "叹词", "numeral": "数",
+    "conjunction": "连", "expression": "短语", "idiom": "短语", "greeting": "叹词",
+    "pronoun": "代", "sentence": "短句", "determiner": "限定", "roman numeral": "数",
+    "custom class": "专名", "affix": "缀",
+})
+
+# 旧库把每条 gloss 截到 90 字符（实测：全库最大长度恰为 90，且 106/106 处差异都是这一条规则），
+# 这里复刻——否则重建出的词典体积与显示宽度都跟原库对不上。
+MAX_GLOSS_LEN = 90
+MAX_GLOSSES = 2
 
 # 旧库里来源不明、无法重建的文件：只生成结构合法的占位，让应用能启动。
 PLACEHOLDER_NOTE = (
@@ -196,10 +209,10 @@ def build_dict(cache_dir, out_dir, limit=None, shard_size=3844, legacy_pos=False
         glosses = []
         for s in d.get("senses") or []:
             for g in (s.get("glosses") or []):
-                g = g.strip()
+                g = " ".join(g.split())[:MAX_GLOSS_LEN]
                 if g and g not in glosses:
                     glosses.append(g)
-            if len(glosses) >= 4:
+            if len(glosses) >= MAX_GLOSSES:
                 break
         if not glosses:
             continue
@@ -208,11 +221,11 @@ def build_dict(cache_dir, out_dir, limit=None, shard_size=3844, legacy_pos=False
             p = (LEGACY_UNMAPPED if legacy_pos else {}).get(pos, pos)
         e = entries.get(word)
         if e is None:
-            entries[word] = {"p": p, "g": glosses[:4]}
+            entries[word] = {"p": p, "g": glosses[:MAX_GLOSSES]}
         else:
             if e["p"] == pos or e["p"] == p:
                 for g in glosses:
-                    if g not in e["g"] and len(e["g"]) < 4:
+                    if g not in e["g"] and len(e["g"]) < MAX_GLOSSES:
                         e["g"].append(g)
         if limit and len(entries) >= limit:
             print("  --limit 生效：取满 %d 词条后停止（未下完的流已关闭）" % limit)
