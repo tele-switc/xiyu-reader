@@ -1,0 +1,28 @@
+XiYuReader — Third-Party Software Notices
+=========================================
+本产品在 resources/lib/ 下捆绑了下列第三方 JavaScript 库。各库的版权与许可声明按其
+许可证要求原样保留在各文件头部，未做删改。版本号由文件内 banner/常量与上游发行物
+逐字节（MD5）比对确定，非推测。
+
+1. epub.js 0.3.93 — BSD 2-Clause "Simplified" License
+   Copyright (c) FuturePress
+   https://github.com/futurepress/epub.js
+
+2. JSZip 3.10.1 — 该库为 MIT / GPLv3 双许可，本项目选择按 **MIT** 分支使用。
+   Copyright (c) 2009-2016 Stuart Knightley
+   https://github.com/Stuk/jszip
+   内含 pako（https://github.com/nodeca/pako），MIT 许可。
+
+3. pdf-lib 1.17.1 — MIT License
+   Copyright (c) 2019 Andrew Dillon
+   https://github.com/Hopding/pdf-lib
+   包内含 tslib 的版权声明（Copyright (c) Microsoft Corporation，Apache-2.0）。
+
+4. pdf.js 3.11.174（pdf.min.js、pdf.worker.min.js）— Apache License 2.0
+   Copyright 2023 Mozilla Foundation
+   https://github.com/mozilla/pdf.js
+   许可全文见 http://www.apache.org/licenses/LICENSE-2.0
+   文件保留了原始的 @licstart / @licend 头块。Apache-2.0 含专利授权条款（第 3 条）。
+
+引用位置：resources/index.html:134-137（jszip / epub / pdf / pdf-lib），
+resources/js/reader-pdf.js:9,42（pdf.worker.min.js）。5 个库全部在用，无一可剔除。

@@ -1,0 +1,76 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R] /Count 3 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 348 >>
+stream
+BT /F1 16 Tf 60 780 Td 22 TL
+/F1 20 Tf (El pequeno lector de espanol) Tj /F1 12 Tf
+T*
+T* (Bienvenido a tu lector de espanol.) Tj
+T* (Este es un texto de ejemplo para probar las funciones del lector.) Tj
+T* (Puedes seleccionar cualquier palabra para ver su significado.) Tj
+T* (Las palabras dificiles se marcan automaticamente segun tu nivel.) Tj
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 421 >>
+stream
+BT /F1 16 Tf 60 780 Td 22 TL
+(Un dia en la ciudad) Tj
+T*
+T* (Maria camina por las calles de Madrid mientras piensa en su futuro.) Tj
+T* (Quiere encontrar un trabajo que le permita viajar por toda America Latina.) Tj
+T* (Su hermano le dijo que la vida es un viaje lleno de sorpresas.) Tj
+T* (Ella sonrie porque sabe que cada esfuerzo tiene su recompensa.) Tj
+T* (Al caer la noche, regresa a casa cansada pero feliz.) Tj
+ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 9 0 R >>
+endobj
+9 0 obj
+<< /Length 353 >>
+stream
+BT /F1 16 Tf 60 780 Td 22 TL
+(Consejos para aprender idiomas) Tj
+T*
+T* (Leer todos los dias es la mejor manera de ampliar tu vocabulario.) Tj
+T* (No tengas miedo de cometer errores; son parte del aprendizaje.) Tj
+T* (Intenta recordar las palabras nuevas dentro de frases completas.) Tj
+T* (Con paciencia y constancia, lograras hablar con fluidez.) Tj
+ET
+endstream
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000127 00000 n 
+0000000224 00000 n 
+0000000350 00000 n 
+0000000749 00000 n 
+0000000875 00000 n 
+0000001347 00000 n 
+0000001473 00000 n 
+trailer
+<< /Size 10 /Root 1 0 R >>
+startxref
+1877
+%%EOF

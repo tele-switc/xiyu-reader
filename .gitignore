@@ -1,0 +1,20 @@
+# 数据构建产物与缓存
+data-test/
+data-test2/
+data-build/
+app-src/resources/data/
+*.part
+
+# Neutralino 构建产物与依赖（壳二进制 ~22MB 不入库）
+app-src/dist/
+app-src/bin/
+app-src/node_modules/
+node_modules/
+package/
+
+# Python / 编辑器 / 系统
+__pycache__/
+*.py[cod]
+.vscode/
+.idea/
+Thumbs.db

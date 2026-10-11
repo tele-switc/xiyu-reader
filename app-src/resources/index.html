@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>西语阅读器 · Lector</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23b5542d'/%3E%3Ctext x='32' y='45' font-size='36' font-family='Georgia' fill='%23fff' text-anchor='middle'%3E%C3%91%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============ 书库视图 ============ -->
+<div id="library-view" class="view">
+  <header class="lib-header">
+    <div class="brand"><span class="brand-mark">LE</span>
+      <div><h1>西语阅读器</h1><p class="sub">Lector de Español · 按你的词汇量智能标注生词</p></div>
+    </div>
+    <div class="lib-header-right">
+      <span id="level-badge" class="level-badge hidden"></span>
+      <button class="btn ghost js-esh-open" title="查词自动同步到西语助手生词本">📗 生词本同步</button>
+      <button id="btn-retest" class="btn ghost hidden">重测词汇</button>
+    </div>
+  </header>
+
+  <div id="test-banner" class="test-banner hidden">
+    <div>
+      <b>先测一测你的词汇量</b>
+      <p>约 4 分钟的自适应测试，摸清你的词汇水平与盲点，之后阅读时才能精准标注生词。</p>
+    </div>
+    <div class="row">
+      <button id="btn-start-test" class="btn primary">开始测试</button>
+      <button id="btn-skip-test" class="btn ghost">跳过，先用默认水平</button>
+    </div>
+  </div>
+
+  <div class="lib-toolbar">
+    <button id="btn-import" class="btn primary">📥 导入书籍（PDF / EPUB / MOBI）</button>
+    <input type="file" id="file-input" accept=".pdf,.epub,.mobi" multiple hidden>
+    <span class="hint">EPUB / MOBI / TXT 存在本机书库里；PDF 会记住原文件位置，高亮直接写回那个 PDF 文件</span>
+  </div>
+
+  <div id="book-grid" class="book-grid"></div>
+</div>
+
+<!-- ============ 阅读器视图 ============ -->
+<div id="reader-view" class="view hidden">
+  <div class="reader-topbar">
+    <button id="btn-back" class="icon-btn" title="返回书库">←</button>
+    <div class="reader-title-wrap"><span id="reader-title" class="reader-title"></span>
+      <span id="reader-sub" class="reader-sub"></span></div>
+    <div class="search-box">
+      <input id="search-input" type="text" placeholder="搜索书中词句…" autocomplete="off">
+      <div id="search-results" class="search-results hidden"></div>
+    </div>
+    <button id="btn-bookmark" class="icon-btn" title="添加书签">🔖</button>
+    <button class="icon-btn js-esh-open" title="西语助手生词本同步">📗</button>
+    <button id="btn-theme" class="icon-btn" title="切换主题">◐</button>
+    <button id="btn-font-down" class="icon-btn" title="缩小正文 (Ctrl+-)">A-</button>
+    <button id="btn-font-up" class="icon-btn" title="放大正文 (Ctrl++)">A+</button>
+  </div>
+
+  <div class="reader-body">
+    <div id="reader-pane" class="reader-pane"></div>
+    <div id="sidebar" class="sidebar">
+      <div class="side-tabs">
+        <button class="side-tab active" data-tab="dict">词典</button>
+        <button class="side-tab" data-tab="marks">书签</button>
+        <button class="side-tab" data-tab="vocab">生词本</button>
+        <button class="side-tab" data-tab="history">历史进度</button>
+        <button class="side-tab hidden" data-tab="toc">目录</button>
+      </div>
+      <div id="tab-dict" class="side-panel active">
+        <div id="dict-empty" class="dict-empty">双击或选中正文中的单词即可查词。<br><br>
+          <span class="faint">PDF：单击一个词 = 加/去黄色高亮（真实写进 PDF 文件，其它软件也看得到）<br>
+          EPUB / MOBI / TXT：黄色底纹仍是按你的水平自动标注的生词</span></div>
+        <div id="dict-content"></div>
+      </div>
+      <div id="tab-marks" class="side-panel"></div>
+      <div id="tab-vocab" class="side-panel"></div>
+      <div id="tab-history" class="side-panel"></div>
+      <div id="tab-toc" class="side-panel"></div>
+    </div>
+  </div>
+
+  <div class="reader-footer">
+    <button id="btn-prev" class="icon-btn" title="上一页/上一章">‹</button>
+    <div id="progress-track" class="progress-track"><div id="progress-fill" class="progress-fill"></div></div>
+    <span id="progress-label" class="progress-label">0%</span>
+    <button id="btn-next" class="icon-btn" title="下一页/下一章">›</button>
+  </div>
+</div>
+
+<!-- ============ 测试向导 ============ -->
+<div id="test-modal" class="modal hidden">
+  <div class="modal-card test-card">
+    <div id="test-body"></div>
+  </div>
+</div>
+
+<!-- ============ 西语助手同步设置 ============ -->
+<div id="esh-modal" class="modal hidden">
+  <div class="modal-card esh-card">
+    <h2>西语助手生词本同步</h2>
+    <p class="esh-sub">开启后，阅读中查过的西语单词会自动加入你西语助手账号的云端生词本（含释义由西语助手端自动补全）。离线时先入队，联网后自动补传。</p>
+    <label class="esh-check"><input type="checkbox" id="esh-enabled"> 查过的词自动加入西语助手生词本</label>
+    <div class="esh-field">
+      <label for="esh-token">API Token</label>
+      <input type="password" id="esh-token" placeholder="粘贴在 my.eudic.net/OpenAPI/Authorization 获取的授权串" autocomplete="off">
+      <div class="faint" style="margin-top:5px">用西语助手/欧路词典账号登录 <a href="https://my.eudic.net/OpenAPI/Authorization" target="_blank" rel="noopener">my.eudic.net/OpenAPI/Authorization</a>，复制整段授权串粘贴到这里。Token 只保存在本机。</div>
+    </div>
+    <div class="esh-field">
+      <label>目标生词本</label>
+      <div class="esh-row2">
+        <select id="esh-cat"></select>
+        <button id="esh-newcat" class="btn small">＋ 新建</button>
+      </div>
+    </div>
+    <div class="esh-btns">
+      <button id="esh-test" class="btn small">连接测试 / 载入生词本列表</button>
+      <button id="esh-flush" class="btn small">立即补传</button>
+      <span id="esh-status" class="esh-status faint">尚未配置</span>
+    </div>
+    <div id="esh-detail" class="esh-detail faint"></div>
+    <div class="esh-foot">
+      <button id="esh-save" class="btn primary">保存</button>
+      <button id="esh-close" class="btn ghost">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 提示 ============ -->
+<div id="toast" class="toast hidden"></div>
+
+<script src="lib/jszip.min.js"></script>
+<script src="lib/epub.min.js"></script>
+<script src="lib/pdf.min.js"></script>
+<script src="lib/pdf-lib.min.js"></script>
+<script src="js/neutralino.js"></script>
+<script src="js/native.js"></script>
+<script src="js/db.js"></script>
+<script src="js/pdf-annot.js"></script>
+<script src="js/pdf-store.js"></script>
+<script src="js/data.js"></script>
+<script src="js/conj.js"></script>
+<script src="js/profile.js"></script>
+<script src="js/eshelper.js"></script>
+<script src="js/mobi.js"></script>
+<script src="js/reader.js"></script>
+<script src="js/reader-epub.js"></script>
+<script src="js/reader-pdf.js"></script>
+<script src="js/reader-reflow.js"></script>
+<script src="js/teststat.js"></script>
+<script src="js/test.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

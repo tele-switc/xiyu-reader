@@ -1,0 +1,145 @@
+{
+ "ranAt": "2026-10-11T08:29:54.656Z",
+ "results": [
+  {
+   "name": "A 旧版只发 id → 服务端按官方契约判 400",
+   "pass": true,
+   "detail": "HTTP 400｜参数存在错误：缺少 category_id（id 已废弃）"
+  },
+  {
+   "name": "B 查词触发同步并返回 synced",
+   "pass": true,
+   "detail": "synced"
+  },
+  {
+   "name": "B 请求体使用 category_id",
+   "pass": true,
+   "detail": "{\"language\":\"es\",\"category_id\":\"0\",\"words\":[\"bodega\"]}"
+  },
+  {
+   "name": "B 不再带上被服务端拒绝的 id 字段",
+   "pass": true,
+   "detail": "body 键：language,category_id,words"
+  },
+  {
+   "name": "B 词确实进了云端生词本",
+   "pass": true,
+   "detail": "bodega"
+  },
+  {
+   "name": "C 大整数生词本 ID 原样传字符串",
+   "pass": true,
+   "detail": "190000000000000001"
+  },
+  {
+   "name": "C 词进了指定本子（非默认本）",
+   "pass": true,
+   "detail": "feto"
+  },
+  {
+   "name": "D 清洗后队列里全部是合格单词",
+   "pass": true,
+   "detail": "queue=133（原始 240）"
+  },
+  {
+   "name": "D 清洗后无重复",
+   "pass": true,
+   "detail": "唯一数 133"
+  },
+  {
+   "name": "D 词数守恒（留下的 + 留档的 = 原始数）",
+   "pass": true,
+   "detail": "133 + 107 = 240 vs 240"
+  },
+  {
+   "name": "D 被剔出的确实是空格串/残字符/超短词",
+   "pass": true,
+   "detail": "\"barre�os\"(清洗：含标点或残字符) \"erig�an\"(清洗：含标点或残字符) \"empeque�ecido\"(清洗：含标点或残字符) \"pre�ada\"(清洗：含标点或残字符)"
+  },
+  {
+   "name": "E 15 个词全部同步成功",
+   "pass": true,
+   "detail": "全部在库"
+  },
+  {
+   "name": "E 每词只发一次请求（失败不重试放大）",
+   "pass": true,
+   "detail": "POST 15 次"
+  },
+  {
+   "name": "E 一分钟内请求数压在 30 次线下",
+   "pass": true,
+   "detail": "15 次 / 40.5 秒"
+  },
+  {
+   "name": "F 403 时词留在队列（不丢）",
+   "pass": true,
+   "detail": "queue=1"
+  },
+  {
+   "name": "F 进入约 70 分钟冷却",
+   "pass": true,
+   "detail": "70 分钟"
+  },
+  {
+   "name": "F 冷却期内不再发请求、两个词都留着",
+   "pass": true,
+   "detail": "queue=2，新增请求 0"
+  },
+  {
+   "name": "F 错误如实上报（含 HTTP 码）",
+   "pass": true,
+   "detail": "403 访问过于频繁：访问过于频繁，禁止访问"
+  },
+  {
+   "name": "F 冷却结束后自动补传两个词",
+   "pass": true,
+   "detail": "补传 2｜vivero,calibrar,guadañas"
+  },
+  {
+   "name": "F 补传后队列清空",
+   "pass": true,
+   "detail": "queue=0"
+  },
+  {
+   "name": "G 401 时词留队列且提示授权",
+   "pass": true,
+   "detail": "401 授权未通过（Token 无效或过期）：授权认证未通过，或授权已过期"
+  },
+  {
+   "name": "H 未开启 → 不入队不发请求",
+   "pass": true,
+   "detail": "queue=0"
+  },
+  {
+   "name": "I 短语被剔出并留档可见",
+   "pass": true,
+   "detail": "dropped=1 queue=0"
+  },
+  {
+   "name": "J 100 词积压分两批传完（80 + 20）",
+   "pass": true,
+   "detail": "第一批 80，第二批 20，缺 0"
+  },
+  {
+   "name": "J 全部落地云端生词本",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "K 不存在的 ID 按名字找回正确 ID",
+   "pass": true,
+   "detail": "190000000000000000 → 190000000000000001"
+  },
+  {
+   "name": "K 修正后两个积压词传成功",
+   "pass": true,
+   "detail": "sent=2｜feto,apenas,todavia"
+  },
+  {
+   "name": "K 修正结果写回本机设置",
+   "pass": true,
+   "detail": "存回 catId=190000000000000001"
+  }
+ ]
+}
