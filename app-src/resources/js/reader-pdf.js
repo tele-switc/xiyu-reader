@@ -137,7 +137,11 @@ const PdfReader = (() => {
 
     async function getPageText(n) {
       if (textCache[n]) return textCache[n];
-      const tc = await pages[n - 1].page.getTextContent();
+      const slot = pages[n - 1];
+      if (!slot) return '';
+      // 懒加载后未渲染的页 page 为 null；搜索全册时必须先补取页对象，否则整页被 catch 静默跳过
+      if (!slot.page) slot.page = await pdf.getPage(n);
+      const tc = await slot.page.getTextContent();
       const t = tc.items.map(it => it.str).join(' ').replace(/\s+/g, ' ');
       textCache[n] = t;
       return t;
