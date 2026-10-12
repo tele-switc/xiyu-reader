@@ -72,7 +72,7 @@ npx neu run                # 开发模式直接跑
 npx neu build              # 出包到 dist/
 ```
 
-`resources/bin/`（各平台 Neutralino 壳，约 22MB）不在仓库里，由 `neu` 首次运行时自行下载。
+`bin/`（app-src 下，各平台 Neutralino 壳，约 22MB）不在仓库里，由 `neu` 首次运行时自行下载。
 
 ## 3. 生词本同步的隐私设计
 
