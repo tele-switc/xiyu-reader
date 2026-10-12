@@ -355,19 +355,25 @@ def write_placeholders(out_dir, freq=None, dict_entries=None):
     tb = {"version": 1, "note": PLACEHOLDER_NOTE, "zh": {}, "es": {}}
     with open(os.path.join(out_dir, "testbank.json"), "w", encoding="utf-8") as f:
         json.dump(tb, f, ensure_ascii=False)
-    # data.js 会检查 tb3.bands 存在，否则直接 throw —— 这里给出 8 个合法空档
+    # data.js 会检查 tb3.bands 存在，否则直接 throw —— 这里给出结构合法的空档位。
+    # 字段必须与消费面（test.js 的 SIZES()/SHARES()、simulate-test.cjs）逐一对齐：
+    # bandRanges/bandSizes 用真实词频带量程，meta（含 cognateShare）与 glossLang 不可缺，
+    # 旧版占位缺 meta 导致词汇测试一跑就 TypeError，bandSizes 还错过成 ≤400 把量程整个压歪。
+    tb3_bands = [(1, 500), (501, 1000), (1001, 2000), (2001, 3000),
+                 (3001, 5000), (5001, 8000), (8001, 12000), (12001, 20000)]
+    tb3_caps = [400, 400, 500, 500, 600, 600, 500, 700]   # 与 build-testbank3.py 的题池上限一致
     bands = []
     if freq:
-        step = max(1, len(freq) // 8)
-        for i in range(8):
-            lo, hi = i * step, (i + 1) * step
-            bands.append([w for w, r in freq.items() if lo < int(r) <= hi][:400])
+        for (lo, hi), cap in zip(tb3_bands, tb3_caps):
+            bands.append([w for w, r in freq.items() if lo <= int(r) <= hi][:cap])
     else:
-        bands = [[] for _ in range(8)]
+        bands = [[] for _ in tb3_bands]
+    tb3_meta = [{"size": hi - lo + 1, "pool": len(b), "zh": 0, "en": 0, "ex": 0,
+                 "cognateShare": 0} for (lo, hi), b in zip(tb3_bands, bands)]
     tb3 = {"version": 3, "builtAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-           "bandRanges": [[i * 12, i * 12 + 12] for i in range(8)],
-           "bandSizes": [len(b) for b in bands], "bands": bands,
-           "gloss": {}, "note": PLACEHOLDER_NOTE}
+           "bandRanges": [list(x) for x in tb3_bands],
+           "bandSizes": [hi - lo + 1 for lo, hi in tb3_bands], "bands": bands,
+           "gloss": {}, "glossLang": {}, "meta": tb3_meta, "note": PLACEHOLDER_NOTE}
     with open(os.path.join(out_dir, "testbank3.json"), "w", encoding="utf-8") as f:
         json.dump(tb3, f, ensure_ascii=False)
     print("  占位与 testbank 已写出（词汇量测试需自备数据，见 PLACEHOLDER_NOTE）")
