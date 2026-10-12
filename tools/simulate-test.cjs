@@ -19,7 +19,15 @@ const path = require('path');
 
 const RES = path.join(__dirname, '..', 'app-src', 'resources');
 const TS = require(path.join(RES, 'js', 'teststat.js'));
-const bank = JSON.parse(fs.readFileSync(path.join(RES, 'data', 'testbank3.json'), 'utf-8'));
+/* 题库是数据构建产物（不入库）。缺失时干净跳过并给出构建指引，
+   否则 `node --test tools/` 会把它当测试跑出一坨 ENOENT 栈，掩盖真实回归结果。 */
+const BANK_PATH = path.join(RES, 'data', 'testbank3.json');
+if (!fs.existsSync(BANK_PATH)) {
+  console.log('跳过 simulate-test：缺少 app-src/resources/data/testbank3.json（数据不入库）。\n' +
+    '先跑 `python tools/build_data.py --freq-only`（占位题库）或 `--all`（完整题库）再复跑。');
+  process.exit(0);
+}
+const bank = JSON.parse(fs.readFileSync(BANK_PATH, 'utf-8'));
 
 const SIZES = bank.bandSizes;                      // [500,500,1000,1000,2000,3000,4000,8000]
 const SHARES = bank.meta.map(m => m.cognateShare); // 实测同源占比，不是猜的
