@@ -100,16 +100,24 @@ npx neu build              # 出包到 dist/
 ## 4. 自检（不用起界面）
 
 ```bash
-node tools/eshelper-sync.test.mjs      # 生词本同步契约：28 项，全在假 HTTP 上跑
+node --test tools/                 # 开箱即绿：3 个入口，0 失败
 ```
 
-覆盖的是真会咬人的那几处：18 位词本 ID 按字符串走（用 `Number()` 会被双精度改尾数）、
-限流退避（1 分钟 30 次封 1 小时 / 30 分钟 500 次封 24 小时）、批量合并、
-ID 不存在时按词本名找回并写回本机设置。fixture 与桩里的 ID 全是人造占位，不含任何真实账号。
+克隆下来没有 `data/` 也能直接跑这一条。三个入口分别是：
 
-`tools/simulate-test.cjs`（词汇量测试的模拟出题）**要先构建过数据**才能跑：
-它读 `app-src/resources/data/testbank3.json`，没构建就按上面第 1 节先生成，
-否则报找不到文件——这是数据不入库的直接后果，不是坏了。
+| 入口 | 项数 | 覆盖什么 |
+|---|---|---|
+| `tools/eshelper-sync.test.mjs` | 28 | 生词本同步契约，全在假 HTTP 上跑，不碰真账号 |
+| `tools/testbank-schema.test.mjs` | 6 | 题库 schema 与分带：`glossLang` 在位、`SHARES()/SIZES()` 取数路径跑通、词条按真实秩区间分带、空观测时 `estimate` 交付不崩 |
+| `tools/simulate-test.cjs` | 见下 | 词汇量测试的模拟出题 |
+
+同步那 28 项覆盖的是真会咬人的几处：18 位词本 ID 按**字符串**走（用 `Number()` 会被双精度改尾数、
+词就进错本子）、限流退避（1 分钟 30 次封 1 小时 / 30 分钟 500 次封 24 小时）、批量合并、
+ID 不存在时按词本名找回并写回本机设置。fixture 与桩里的 ID 全是人造占位。
+
+`simulate-test.cjs` 要读构建产物 `app-src/resources/data/testbank3.json`。**没构建过数据时它自己
+干净跳过**——打一行原因和该跑哪条命令，然后算通过，不把绿变成红。这是"数据不入库"的直接后果，
+不是坏了；要真跑它就先 `python tools/build_data.py --freq-only`（占位题库，几秒钟）或 `--all`。
 
 ## 5. 许可
 
